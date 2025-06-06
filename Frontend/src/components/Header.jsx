@@ -39,7 +39,7 @@ const Header = () => {
           <FaMoon />
         </Button>
         <Link to={"sign-in"}>
-          <Button color={"green"}>Sign In</Button>
+          <Button outline color={'yellow'}>Sign In</Button>
         </Link>
         <NavbarToggle />
       </div>
