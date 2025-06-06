@@ -2,16 +2,22 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import connectDB from './utils/db.js'
+import userRouter from "./routes/user.route.js";
+import authRouter from "./routes/auth.route.js";
 
-dotenv.config({})
+dotenv.config({});
 connectDB();
 
-const app = express();
-app.use(cors({}))
-const PORT = process.env.PORT || 3000
-app.use(express.json())
-app.use(express.urlencoded({extended:true}))
+const PORT = process.env.PORT || 3000;
 
+const app = express();
+app.use(cors({}));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use("/api/user", userRouter);
+app.use("/api/auth", authRouter);
 
 app.listen(PORT, () => {
   console.log(`server started on : ${PORT}`);  
