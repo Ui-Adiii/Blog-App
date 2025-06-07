@@ -28,6 +28,7 @@ const Signup = () => {
         setloading(false);
         navigate('/sign-in')
       }
+      setloading(false);
     } catch (error) {
       seterror(error.message);
       setloading(false)
@@ -35,7 +36,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen mt-20">
+    <div className="min-h-[400px] mt-20">
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
         {/* left */}
         <div className="flex-1">
@@ -46,7 +47,7 @@ const Signup = () => {
             Blog
           </Link>
           <p className="text-sm mt-5">
-            This is a demo project. You can sign up with your email and password
+            This is a demo project. You can sign in with your email and password
             or with Google.
           </p>
         </div>
@@ -93,7 +94,7 @@ const Signup = () => {
                 loading ? (
                   <><Spinner size="sm" />
                   <span className="pl-3">Loading...</span></>
-                ):'Sign Up'
+                ):'Sign In'
             }
               
             </Button>
