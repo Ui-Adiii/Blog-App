@@ -2,10 +2,10 @@ import React from "react";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import axios from "axios";
 import {signInFailure,signInSuccess,signInStart } from '../redux/user/userSlice.js'
 import { useDispatch,useSelector} from 'react-redux'
+import OAuth from "../components/OAuth.jsx";
 
 const Signin = () => {
   const dispatch =useDispatch()
@@ -88,6 +88,7 @@ const Signin = () => {
             }
               
             </Button>
+            <OAuth/>
           </form>
           <div className="flex gap-2 text-sm mt-5">
             <span>Don't have an account?</span>

@@ -5,18 +5,24 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
     },
     email: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
     },
     password: {
       type: String,
       required: true,
     },
-  }, { timestamps: true }
+    profilePicture: {
+      type: String,
+      default:
+        "https://th.bing.com/th/id/OIP.n1C1oxOvYLLyDIavrBFoNQAAAA?r=0&w=256&h=256&rs=1&pid=ImgDetMain",
+    },
+  },
+  { timestamps: true }
 );
 
 const User = mongoose.model("User", userSchema);
