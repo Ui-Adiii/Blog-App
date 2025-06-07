@@ -7,7 +7,7 @@ import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import Projects from './pages/Projects'
 import Header from './components/Header'
-import { Button } from "flowbite-react";
+import { ToastContainer } from 'react-toastify';
 
 
 
@@ -15,6 +15,7 @@ const App = () => {
 
   return (
     <BrowserRouter>
+      <ToastContainer/>
       <Header/>
       <Routes>
         <Route path="/" element={<Home/>}  />

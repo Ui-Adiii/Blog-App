@@ -1,6 +1,6 @@
 import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
-
+import { errorHandler } from "../utils/error.js";
 const signUp = async (req, res, next) => {
   try {
     const { username, password, email } = req.body;
@@ -12,24 +12,24 @@ const signUp = async (req, res, next) => {
       !password ||
       password === ""
     ) {
-      next(errorHandler(400,'All Fields are required'))
+      next(errorHandler(400, "All Fields are required"));
     }
 
-    // let existUser = await User.findOne({ email });
-    // if (existUser) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "User already exist",
-    //   });
-    // }
+    let existUser = await User.findOne({ email });
+    if (existUser) {
+      res.json({
+        success: false,
+        message: "user already exist",
+      });
+    }
 
-    // existUser = await User.findOne({ username });
-    // if (existUser) {
-    // return  res.status(400).json({
-    //     success: false,
-    //     message: "User already exist",
-    //   });
-    // }
+    existUser = await User.findOne({ username });
+    if (existUser) {
+      res.json({
+        success: false,
+        message: "user already exist",
+      });
+    }
 
     const hashedPassword = bcryptjs.hashSync(password, 10);
 
