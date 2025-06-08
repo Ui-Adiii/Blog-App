@@ -21,7 +21,6 @@ import { useSelector } from 'react-redux';
 export default function DashSidebar() {
   const location = useLocation();
   const dispatch = useDispatch();
-  console.log(Sidebar.Items);
   
   const { currentUser } = useSelector((state) => state.user);
   const [tab, setTab] = useState('');
