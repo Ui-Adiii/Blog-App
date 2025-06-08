@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import flowbiteReact from "flowbite-react/plugin/vite";
 
 export default defineConfig({
+  darkMode: "class",
   server: {
     proxy: {
       "/api": {
