@@ -57,7 +57,7 @@ const FooterCom = () => {
               <FooterTitle title="Follow us" />
               <FooterLinkGroup col>
                 <FooterLink
-                  href="https://www.github.com/sahandghavidel"
+                  href="https://github.com/Ui-Adiii"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -87,7 +87,7 @@ const FooterCom = () => {
             <FooterIcon href="#" icon={BsInstagram} />
             <FooterIcon href="#" icon={BsTwitter} />
             <FooterIcon
-              href="https://github.com/sahandghavidel"
+              href="https://github.com/Ui-Adiii"
               icon={BsGithub}
             />
             <FooterIcon href="#" icon={BsDribbble} />
