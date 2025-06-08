@@ -24,10 +24,9 @@ const OAuth = () => {
         email: resultFromGoogle.user.email,
         googlePhotoUrl: resultFromGoogle.user.photoURL,
       })
-      console.log(response);
       
       if (response.data.success) {
-        dispath(signInSuccess(response.data));
+        dispath(signInSuccess(response.data.rest));
         navigate('/')
       }
     } catch (error) {

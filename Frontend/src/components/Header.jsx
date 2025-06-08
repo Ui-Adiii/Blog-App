@@ -6,12 +6,21 @@ import {
   NavbarCollapse,
   NavbarLink,
   NavbarToggle,
+  Dropdown,
+  DropdownHeader,
+  Avatar,
+  DropdownItem,
+  DropdownDivider,
 } from "flowbite-react";
-import { Link , useLocation} from "react-router";
+import { Link, useLocation } from "react-router";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon } from "react-icons/fa";
+import { useSelector } from "react-redux";
+
 const Header = () => {
-  const path = useLocation().pathname
+  const { currentUser } = useSelector((state) => state.user);
+
+  const path = useLocation().pathname;
   return (
     <Navbar className="border-b-2 ">
       <Link
@@ -38,23 +47,55 @@ const Header = () => {
         <Button className="w-12 h-10 hidden sm:inline " color={"gray"} pill>
           <FaMoon />
         </Button>
-        <Link to={"sign-in"}>
-          <Button outline color={'yellow'}>Sign In</Button>
-        </Link>
+        {currentUser ? (
+          <Dropdown
+            dismissOnClick={false}
+            arrowIcon={false}
+            inline
+            label={
+              <Avatar alt="user" img={currentUser.profilePicture} rounded />
+            }
+          >
+            <DropdownHeader>
+              <span className="block text-sm">@{currentUser.username}</span>
+              <span className="font-medium block text-sm truncate">
+                {currentUser.email}
+              </span>
+            </DropdownHeader>
+
+            <Link to={"/dashboard?tab=profile"}>
+              <DropdownItem>Profile</DropdownItem>
+            </Link>
+            <DropdownDivider />
+            <DropdownItem>Sign out</DropdownItem>
+          </Dropdown>
+        ) : (
+          <Link to={"sign-in"}>
+            <Button outline color={"yellow"}>
+              Sign In
+            </Button>
+          </Link>
+        )}
+
         <NavbarToggle />
       </div>
       <NavbarCollapse className="order-1">
-        <NavbarLink active={path === '/'}  as={'div'}>
-          <Link to={"/"} className='text-white'>Home
+        <NavbarLink active={path === "/"} as={"div"}>
+          <Link to={"/"} className="text-white">
+            Home
           </Link>
         </NavbarLink>
 
-        <NavbarLink active={path === '/about'} as={'div'}>
-          <Link to={"/about"}className='text-white'>About</Link>
+        <NavbarLink active={path === "/about"} as={"div"}>
+          <Link to={"/about"} className="text-white">
+            About
+          </Link>
         </NavbarLink>
 
-        <NavbarLink active={path === '/projects'} as={'div'}>
-          <Link to={"/projects"} className='text-white'>Projects </Link>
+        <NavbarLink active={path === "/projects"} as={"div"}>
+          <Link to={"/projects"} className="text-white">
+            Projects{" "}
+          </Link>
         </NavbarLink>
       </NavbarCollapse>
     </Navbar>
