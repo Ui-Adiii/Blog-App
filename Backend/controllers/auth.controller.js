@@ -142,4 +142,5 @@ const google = async (req, res) => {
     });
   }
 };
+
 export { signUp, signIn, google };
