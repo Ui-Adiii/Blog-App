@@ -1,21 +1,35 @@
-import { Button, TextInput } from "flowbite-react";
+import {
+  Button,
+  Modal,
+  TextInput,
+  ModalHeader,
+  ModalBody,
+} from "flowbite-react";
 import React, { useState, useRef, useEffect } from "react";
-import { useSelector ,useDispatch} from "react-redux";
-import axios from 'axios'
-import {toast} from 'react-toastify'
-import { updateStart,updateFailure,updateSuccess } from "../redux/user/userSlice";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import {
+  updateStart,
+  updateFailure,
+  updateSuccess,
+  deleteFailure,
+  deleteStart,
+  deleteSuccess
+} from "../redux/user/userSlice";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { toast } from 'react-toastify'
 
 const DashProfile = () => {
   const dispatch = useDispatch();
-  const { currentUser,error } = useSelector((state) => state.user);
+  const { currentUser, error } = useSelector((state) => state.user);
   const [imageFile, setimageFile] = useState(null);
   const [imageFileUrl, setimageFileUrl] = useState(null);
   const filePickerRef = useRef();
-  const [formData, setformData] = useState({})
-  
+  const [formData, setformData] = useState({});
+  const [showModal, setshowModal] = useState(false);
 
   const handleChange = (e) => {
-    setformData(prev => ({ ...prev, [e.target.id]: e.target.value })) 
+    setformData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
     // setformData({...formData,[e.target.id]:e.target.value})
   };
   const handleImageChange = (e) => {
@@ -28,22 +42,26 @@ const DashProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!imageFile && Object.keys(formData).length === 0) return;
-  
+
     try {
       dispatch(updateStart());
-  
+
       const data = new FormData();
-      if (imageFile) data.append("profilePicture", imageFile); 
+      if (imageFile) data.append("profilePicture", imageFile);
       for (const key in formData) {
         data.append(key, formData[key]);
       }
-  
-      const response = await axios.put(`/api/user/update/${currentUser._id}`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-  
+
+      const response = await axios.put(
+        `/api/user/update/${currentUser._id}`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
       if (!response.data.success) {
         dispatch(updateFailure(response.data.message));
         toast.error(response.data.message);
@@ -56,11 +74,30 @@ const DashProfile = () => {
       toast.error(error.message);
     }
   };
-  
-  
+
   const uploadImage = async () => {
     localStorage.setItem("imageFileUrl", imageFileUrl);
   };
+
+  const handleDeleteUser = async () => {
+    setshowModal(false);
+    try {
+      dispatch(deleteStart());
+      const response = await axios.delete(`/api/user/delete/${currentUser._id}`);
+      console.log(response);
+      
+      if (!response.data.success) {
+        dispatch(deleteFailure(response.data.message));
+      }
+      else {
+        dispatch(deleteSuccess());
+      }
+    } catch (err) {
+      dispatch(deleteFailure(err.message));
+      toast.error(error);
+    }
+  }
+
   useEffect(() => {
     if (imageFile) {
       uploadImage();
@@ -73,13 +110,13 @@ const DashProfile = () => {
     }
   }, []);
 
-
   return (
     <div className="mx-auto p-3 w-full">
       <h1 className="text-2xl text-center font-semibold mb-4">Profile</h1>
       <form
         onSubmit={handleSubmit}
-        className="flex w-full flex-col items-center justify-center">
+        className="flex w-full flex-col items-center justify-center"
+      >
         <input
           hidden
           type="file"
@@ -87,16 +124,14 @@ const DashProfile = () => {
           onChange={handleImageChange}
           ref={filePickerRef}
           name="image"
-          
         />
 
         <div
           onClick={() => filePickerRef.current.click()}
           className="w-32 h-32 cursor-pointer shadow-md overflow-hidden rounded-full relative"
         >
-         
           <img
-            src={imageFileUrl || currentUser.profilePicture}
+            src={  imageFileUrl || currentUser.profilePicture }
             alt="user"
             className="rounded-full w-full h-full object-cover border-8 border-[lightgray]"
           />
@@ -128,10 +163,31 @@ const DashProfile = () => {
           Update
         </Button>
         <div className="text-red-500 w-[300px] flex justify-between mt-5">
-          <span className="cursor-pointer">Delete Account</span>
+          <span onClick={() => setshowModal(true)} className="cursor-pointer">
+            Delete Account
+          </span>
           <span className="cursor-pointer">Sign Out</span>
         </div>
       </form>
+      <Modal
+        show={showModal}
+        onClose={() => setshowModal(false)}
+        popup
+        size="md"
+      >
+        <ModalHeader>
+          <ModalBody>
+            <div className="text-center">
+              <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+              <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">Are you sre you want to delete your account?</h3>
+              <div className="flex justify-center gap-5">
+                <Button color='red'  onClick={handleDeleteUser} >Yes, I am Sure</Button>
+                <Button color='light' onClick={()=>setshowModal(false)} >No, Cancel</Button>
+              </div>
+            </div>
+          </ModalBody>
+        </ModalHeader>
+      </Modal>
     </div>
   );
 };
