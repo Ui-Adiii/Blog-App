@@ -14,7 +14,10 @@ import {
   updateSuccess,
   deleteFailure,
   deleteStart,
-  deleteSuccess
+  deleteSuccess,
+  signoutStart,
+  signoutSuccess,
+  signoutFailure,
 } from "../redux/user/userSlice";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { toast } from 'react-toastify'
@@ -79,13 +82,27 @@ const DashProfile = () => {
     localStorage.setItem("imageFileUrl", imageFileUrl);
   };
 
+  const handleSignOut = async () => {
+    try {
+      dispatch(signoutStart());
+      const response = await axios.get('/api/user/logout');
+      if (response.data.success) {
+        dispatch(signoutSuccess());
+      }
+      else {
+        dispatch(signoutFailure(response.data.message))
+      }
+    } catch (err) {
+      dispatch(signoutFailure(err.message))
+      toast.error(error);
+    }
+  };
+
   const handleDeleteUser = async () => {
     setshowModal(false);
     try {
       dispatch(deleteStart());
-      const response = await axios.delete(`/api/user/delete/${currentUser._id}`);
-      console.log(response);
-      
+      const response = await axios.delete(`/api/user/delete/${currentUser._id}`);      
       if (!response.data.success) {
         dispatch(deleteFailure(response.data.message));
       }
@@ -166,7 +183,9 @@ const DashProfile = () => {
           <span onClick={() => setshowModal(true)} className="cursor-pointer">
             Delete Account
           </span>
-          <span className="cursor-pointer">Sign Out</span>
+          <span
+          onClick={handleSignOut}
+            className="cursor-pointer">Sign Out</span>
         </div>
       </form>
       <Modal

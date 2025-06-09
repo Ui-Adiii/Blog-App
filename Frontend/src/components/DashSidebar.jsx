@@ -14,14 +14,20 @@ import {
 } from 'react-icons/hi';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-// import { signoutSuccess } from '../redux/user/userSlice';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
+import {
+  signoutStart,
+  signoutSuccess,
+  signoutFailure,
+} from "../redux/user/userSlice";
+import {toast} from 'react-toastify'
+import { useSelector,useDispatch } from 'react-redux';
+import axios from 'axios';
 
-export default function DashSidebar() {
+
+const  DashSidebar = ()=> {
   const location = useLocation();
   const dispatch = useDispatch();
-  
+ const {error}= useSelector(state=>state.user)
   const { currentUser } = useSelector((state) => state.user);
   const [tab, setTab] = useState('');
   useEffect(() => {
@@ -31,19 +37,20 @@ export default function DashSidebar() {
       setTab(tabFromUrl);
     }
   }, [location.search]);
-  const handleSignout = async () => {
+  
+  const handleSignOut = async () => {
     try {
-      const res = await fetch('/api/user/signout', {
-        method: 'POST',
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        console.log(data.message);
-      } else {
+      dispatch(signoutStart());
+      const response = await axios.get('/api/user/logout');
+      if (response.data.success) {
         dispatch(signoutSuccess());
       }
-    } catch (error) {
-      console.log(error.message);
+      else {
+        dispatch(signoutFailure(response.data.message))
+      }
+    } catch (err) {
+      dispatch(signoutFailure(err.message))
+      toast.error(error);
     }
   };
   
@@ -113,7 +120,7 @@ export default function DashSidebar() {
           <SidebarItem
             icon={HiArrowSmRight}
             className='cursor-pointer'
-            onClick={handleSignout}
+            onClick={handleSignOut}
           >
             Sign Out
           </SidebarItem>
@@ -122,3 +129,5 @@ export default function DashSidebar() {
     </Sidebar>
   );
 }
+
+export default DashSidebar

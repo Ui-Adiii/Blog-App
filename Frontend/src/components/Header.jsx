@@ -14,16 +14,40 @@ import {
 } from "flowbite-react";
 import { Link, useLocation } from "react-router";
 import { AiOutlineSearch } from "react-icons/ai";
-import { FaMoon ,FaSun } from "react-icons/fa";
-import { useSelector,useDispatch } from "react-redux";
+import { FaMoon, FaSun } from "react-icons/fa";
+import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
+import { toast } from "react-toastify";
+import axios from 'axios'
+import {
+  signoutStart,
+  signoutSuccess,
+  signoutFailure,
+} from "../redux/user/userSlice";
 
 
 const Header = () => {
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const { theme} = useSelector((state)=>state.theme)
+  const { theme } = useSelector((state) => state.theme);
+  const { error } = useSelector((state) => state.user);
   const path = useLocation().pathname;
+  const handleSignOut = async () => {
+    try {
+      dispatch(signoutStart());
+      const response = await axios.get('/api/user/logout');
+      if (response.data.success) {
+        dispatch(signoutSuccess());
+      }
+      else {
+        dispatch(signoutFailure(response.data.message))
+      }
+    } catch (err) {
+      dispatch(signoutFailure(err.message))
+      toast.error(error);
+    }
+  };
+
   return (
     <Navbar className="border-b-2 ">
       <Link
@@ -47,11 +71,13 @@ const Header = () => {
         <AiOutlineSearch />
       </Button>
       <div className="flex gap-2 md:order-2">
-        
-        <Button onClick={()=>dispatch(toggleTheme())} className="w-12 h-10 hidden sm:inline " color={"gray"} pill>
-          {
-            theme === 'light'  ?<FaSun  /> :<FaMoon />
-          }
+        <Button
+          onClick={() => dispatch(toggleTheme())}
+          className="w-12 h-10 hidden sm:inline "
+          color={"gray"}
+          pill
+        >
+          {theme === "light" ? <FaSun /> : <FaMoon />}
         </Button>
 
         {currentUser ? (
@@ -74,7 +100,7 @@ const Header = () => {
               <DropdownItem>Profile</DropdownItem>
             </Link>
             <DropdownDivider />
-            <DropdownItem>Sign out</DropdownItem>
+            <DropdownItem onClick={handleSignOut}>Sign out</DropdownItem>
           </Dropdown>
         ) : (
           <Link to={"sign-in"}>

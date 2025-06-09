@@ -1,11 +1,21 @@
 import express from 'express';
-import { deleteUser, updateUser } from "../controllers/user.controller.js";
-import userAuth from '../middlewares/auth.middleware.js';
-import upload from '../middlewares/multer.middleware.js';
+import {
+  deleteUser,
+  signOut,
+  updateUser,
+} from "../controllers/user.controller.js";
+import userAuth from "../middlewares/auth.middleware.js";
+import upload from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 
-router.put("/update/:userId", userAuth, upload.single('profilePicture'),updateUser);
+router.put(
+  "/update/:userId",
+  userAuth,
+  upload.single("profilePicture"),
+  updateUser
+);
 router.delete("/delete/:userId", userAuth, deleteUser);
+router.get("/logout", signOut);
 
 export default router;

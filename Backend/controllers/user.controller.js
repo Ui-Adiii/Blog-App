@@ -102,4 +102,18 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export { updateUser, deleteUser };
+const signOut = async (req, res) => {
+  try {
+    return res.clearCookie("access_token").json({
+      success: true,
+      message: "user has been signed out",
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export { updateUser, deleteUser ,signOut};
