@@ -121,13 +121,7 @@ const DashProfile = () => {
       uploadImage();
     }
   }, [imageFile]);
-  useEffect(() => {
-    const imageUrlFromLocalStorage = localStorage.getItem("imageFileUrl");
-    if (imageUrlFromLocalStorage) {
-      setimageFileUrl(imageUrlFromLocalStorage);
-    }
-  }, []);
-
+  
   return (
     <div className="mx-auto p-3 w-full">
       <h1 className="text-2xl text-center font-semibold mb-4">Profile</h1>

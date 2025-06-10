@@ -108,7 +108,7 @@ const CreatePost = () => {
         />
 
         {/* Submit Button */}
-        <Button type="submit" isProcessing={loading} disabled={loading}>
+        <Button type="submit" disabled={loading}>
           {loading ? 'Publishing...' : 'Publish'}
         </Button>
       </form>
