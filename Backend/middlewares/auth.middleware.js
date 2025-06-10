@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken'
 
 const userAuth = async (req, res, next) => {
   try {
+    
     const token = req.cookies.access_token;
     if (!token) {
       return res.json({
@@ -16,9 +17,9 @@ const userAuth = async (req, res, next) => {
           message: "unauthorized user",
         });
       }
-      console.log(user);
       
       req.user = user;
+      
       next();
     })
   } catch (error) {

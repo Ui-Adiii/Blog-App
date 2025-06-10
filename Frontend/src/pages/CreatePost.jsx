@@ -1,58 +1,119 @@
-import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import {
+  Alert,
+  Button,
+  FileInput,
+  Select,
+  TextInput
+} from "flowbite-react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom"; // fixed import
 
-const CreatePost = ()=> {
+const CreatePost = () => {
+  const [file, setFile] = useState(null);
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [textEditor, setTextEditor] = useState('');
+  const [loading, setLoading] = useState(false);
   
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!title || !category || !textEditor || !file) {
+      toast.error("Please fill in all fields and upload an image.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('title', title);
+    formData.append('content', textEditor);
+    formData.append('category', category);
+
+    try {
+      setLoading(true);
+
+      const response = await axios.post('/api/post/create', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      setLoading(false);
+
+      // Make sure to access the actual data
+      if (response.data.success) {
+        toast.success("Post created successfully!");
+        navigate('/');
+      } else {
+        toast.error(response.data.message || "Something went wrong.");
+      }
+
+    } catch (error) {
+      setLoading(false);
+      toast.error(error?.response?.data?.message || "Failed to create post.");
+      console.error("Upload error:", error);
+    }
+  };
+
   return (
-    <div className='p-3 max-w-3xl mx-auto min-h-screen'>
-      <h1 className='text-center text-3xl my-7 font-semibold'>Create a post</h1>
-      <form className='flex flex-col gap-4' >
-        <div className='flex flex-col gap-4 sm:flex-row justify-between'>
+    <div className="p-3 max-w-3xl mx-auto min-h-screen">
+      <h1 className="text-center text-3xl my-7 font-semibold">Create a Post</h1>
+
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        {/* Title & Category */}
+        <div className="flex flex-col gap-4 sm:flex-row justify-between">
           <TextInput
-            type='text'
-            placeholder='Title'
+            type="text"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             required
-            id='title'
-            className='flex-1'
+            className="flex-1"
           />
           <Select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
           >
-            <option value='uncategorized'>Select a category</option>
-            <option value='javascript'>JavaScript</option>
-            <option value='reactjs'>React.js</option>
-            <option value='nextjs'>Next.js</option>
+            <option value="">Select a category</option>
+            <option value="javascript">JavaScript</option>
+            <option value="reactjs">React.js</option>
+            <option value="nextjs">Next.js</option>
           </Select>
         </div>
-        <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
+
+        {/* File Upload */}
+        <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
           <FileInput
-            type='file'
-            accept='image/*'
+            type="file"
+            accept="image/*"
+            onChange={(e) => setFile(e.target.files[0])}
+            required
           />
-          <Button
-            type='button'
-            
-            // size='sm'
-            outline
-          >
-            
-              Upload Image
-            
-          </Button>
         </div>
-        <label for="content">Content:</label>
+
+        {/* Rich Text Editor */}
         <ReactQuill
-          theme='snow'
-          placeholder='Write something...'
-          className='h-72 mb-12  text-slate-300'
-          required
+          value={textEditor}
+          onChange={setTextEditor}
+          theme="snow"
+          placeholder="Write something..."
+          className="h-72 mb-12"
         />
-        <Button type='submit' >
-          Publish
+
+        {/* Submit Button */}
+        <Button type="submit" isProcessing={loading} disabled={loading}>
+          {loading ? 'Publishing...' : 'Publish'}
         </Button>
-        
       </form>
     </div>
   );
-}
-export default CreatePost
+};
+
+export default CreatePost;
