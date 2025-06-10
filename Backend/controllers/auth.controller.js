@@ -53,14 +53,23 @@ const signUp = async (req, res, next) => {
 
 const signIn = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    if (!email || email === "" || !password || password === "") {
+    const { email, password, username } = req.body;
+    if (!password || password === "") {
       return res.json({
         success: false,
-        message: "All Fields are required",
+        message: "Password is required",
       });
     }
-    const user = await User.findOne({ email });
+    const user = await User.findOne({
+      $or: [
+        email ?{
+          email: { $regex: email, $options: "i" },
+        }:null,
+       username? {
+          username: { $regex: username, $options: "i" },
+        }:null,
+      ].filter(Boolean),
+    });
     if (!user) {
       return res.json({
         success: false,
