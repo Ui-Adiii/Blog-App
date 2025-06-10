@@ -20,11 +20,12 @@ import {
   signoutFailure,
 } from "../redux/user/userSlice";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { toast } from 'react-toastify'
+import { toast } from "react-toastify";
+import {Link} from 'react-router-dom'
 
 const DashProfile = () => {
   const dispatch = useDispatch();
-  const { currentUser, error } = useSelector((state) => state.user);
+  const { currentUser, error ,loading } = useSelector((state) => state.user);
   const [imageFile, setimageFile] = useState(null);
   const [imageFileUrl, setimageFileUrl] = useState(null);
   const filePickerRef = useRef();
@@ -85,15 +86,14 @@ const DashProfile = () => {
   const handleSignOut = async () => {
     try {
       dispatch(signoutStart());
-      const response = await axios.get('/api/user/logout');
+      const response = await axios.get("/api/user/logout");
       if (response.data.success) {
         dispatch(signoutSuccess());
-      }
-      else {
-        dispatch(signoutFailure(response.data.message))
+      } else {
+        dispatch(signoutFailure(response.data.message));
       }
     } catch (err) {
-      dispatch(signoutFailure(err.message))
+      dispatch(signoutFailure(err.message));
       toast.error(error);
     }
   };
@@ -102,18 +102,19 @@ const DashProfile = () => {
     setshowModal(false);
     try {
       dispatch(deleteStart());
-      const response = await axios.delete(`/api/user/delete/${currentUser._id}`);      
+      const response = await axios.delete(
+        `/api/user/delete/${currentUser._id}`
+      );
       if (!response.data.success) {
         dispatch(deleteFailure(response.data.message));
-      }
-      else {
+      } else {
         dispatch(deleteSuccess());
       }
     } catch (err) {
       dispatch(deleteFailure(err.message));
       toast.error(error);
     }
-  }
+  };
 
   useEffect(() => {
     if (imageFile) {
@@ -148,7 +149,7 @@ const DashProfile = () => {
           className="w-32 h-32 cursor-pointer shadow-md overflow-hidden rounded-full relative"
         >
           <img
-            src={  imageFileUrl || currentUser.profilePicture }
+            src={imageFileUrl || currentUser.profilePicture}
             alt="user"
             className="rounded-full w-full h-full object-cover border-8 border-[lightgray]"
           />
@@ -176,16 +177,25 @@ const DashProfile = () => {
           onChange={handleChange}
           className="w-[300px] mt-2"
         />
-        <Button type="submit" outline className="w-[300px] mt-2">
-          Update
+        <Button type="submit" outline className="w-[300px] mt-2"
+        
+        disabled={loading}>
+          {loading? "loading...":"Update"}
         </Button>
+        {currentUser.isAdmin && (
+          <Link to='/create-post'>
+          <Button type="button" color="pink" outline className="w-[300px] mt-2">
+            Create a Post
+          </Button>
+          </Link>
+        )}
         <div className="text-red-500 w-[300px] flex justify-between mt-5">
           <span onClick={() => setshowModal(true)} className="cursor-pointer">
             Delete Account
           </span>
-          <span
-          onClick={handleSignOut}
-            className="cursor-pointer">Sign Out</span>
+          <span onClick={handleSignOut} className="cursor-pointer">
+            Sign Out
+          </span>
         </div>
       </form>
       <Modal
@@ -198,10 +208,16 @@ const DashProfile = () => {
           <ModalBody>
             <div className="text-center">
               <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
-              <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">Are you sre you want to delete your account?</h3>
+              <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+                Are you sre you want to delete your account?
+              </h3>
               <div className="flex justify-center gap-5">
-                <Button color='red'  onClick={handleDeleteUser} >Yes, I am Sure</Button>
-                <Button color='light' onClick={()=>setshowModal(false)} >No, Cancel</Button>
+                <Button color="red" onClick={handleDeleteUser}>
+                  Yes, I am Sure
+                </Button>
+                <Button color="light" onClick={() => setshowModal(false)}>
+                  No, Cancel
+                </Button>
               </div>
             </div>
           </ModalBody>

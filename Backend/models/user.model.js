@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default:
         "https://th.bing.com/th/id/OIP.n1C1oxOvYLLyDIavrBFoNQAAAA?r=0&w=256&h=256&rs=1&pid=ImgDetMain",
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
