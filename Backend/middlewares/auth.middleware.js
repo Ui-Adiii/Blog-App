@@ -10,6 +10,7 @@ const userAuth = async (req, res, next) => {
         message: 'unauthorized user',
       });
     }
+   
     jwt.verify(token, process.env.JWT_SECRET, (error, user) => {
       if (error) {
         return res.json({

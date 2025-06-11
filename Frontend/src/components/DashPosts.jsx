@@ -15,6 +15,8 @@ import {
   ModalBody,
 } from "flowbite-react";
 import axios from 'axios';
+import {toast} from 'react-toastify'
+
 const DashPosts = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [userPosts, setUserPosts] = useState([]);
@@ -63,19 +65,17 @@ const DashPosts = () => {
   const handleDeletePost = async () => {
     setShowModal(false);
     try {
-      const response = await fetch(
-        `/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
-        {
-          method: "DELETE",
-        }
+      const response = await axios.delete(
+        `/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,  
       );
       
       if (!response.data.success) {
-        console.log(response.data.message);
+        toast.error(response.data.message);
       } else {
         setUserPosts((prev) =>
           prev.filter((post) => post._id !== postIdToDelete)
         );
+        toast.success(response.data.message);
       }
     } catch (error) {
       console.log(error.message);
@@ -170,7 +170,7 @@ const DashPosts = () => {
               Are you sure you want to delete this post?
             </h3>
             <div className="flex justify-center gap-4">
-              <Button color="failure" onClick={handleDeletePost}>
+              <Button color="red" onClick={handleDeletePost}>
                 Yes, I'm sure
               </Button>
               <Button color="gray" onClick={() => setShowModal(false)}>

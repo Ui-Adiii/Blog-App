@@ -3,7 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 
 const createPost = async (req, res) => {
   try {
-    if (!req.user) {
+    if (!req.user.isAdmin) {
       return res.json({
         success: false,
         message: "You are not allowed for create a post",
@@ -57,7 +57,7 @@ const createPost = async (req, res) => {
   }
 };
 
-const getPosts = async (req, res, next) => {
+const getPosts = async (req, res) => {
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 9;
@@ -100,8 +100,76 @@ const getPosts = async (req, res, next) => {
       message: "getting all the posts",
     });
   } catch (error) {
-    next(error);
+    return res.json({
+      message: error.message,
+      success: false,
+    });
   }
 };
 
-export { createPost, getPosts };
+const deletePost = async (req, res) => {
+  try {
+    if (!req.user.isAdmin || req.user.id !== req.params.userId) {
+      return res.json({
+        message: "you are not allowed to delete the post",
+        success: false,
+      });
+    }
+
+    await Post.findByIdAndDelete(req.params.userId);
+
+    return res.json({
+      message: "post deleted successfully",
+      success: true,
+    });
+  } catch (error) {
+    return res.json({
+      message: error.message,
+      success: false,
+    });
+  }
+};
+
+const updatePost = async (req, res) => {
+  try {
+    if (!req.user.isAdmin || req.user.id !== req.params.userId) {
+      return res.json({
+        message: "you are not allowed to update the post",
+        success: false,
+      });
+    }
+
+    const { title, content, category } = req.body;
+    const slug = title
+      .split(" ")
+      .join("-")
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9-]/g, "");
+
+    const post = await Post.findByIdAndUpdate(
+      req.params.postId,
+      {
+        $set: {
+          title,
+          slug,
+          content,
+          category,
+        },
+      },
+      { new: true }
+    );
+
+    return res.json({
+      success: true,
+      post,
+      message: "updated successfully",
+    });
+  } catch (error) {
+    return res.json({
+      message: error.message,
+      success: false,
+    });
+  }
+};
+
+export { createPost, getPosts, deletePost, updatePost };
