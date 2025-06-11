@@ -46,7 +46,20 @@ const DashUsers = () => {
   }, [currentUser._id]);
 
   const handleDeleteUser = async () => {
-    
+    try {
+      
+      const response = await axios.delete(`/api/user/delete/${userIdToDelete}`);
+      if (response.data.success) {
+        setUsers(users.filter((user) => user._id !== userIdToDelete))
+        setShowModal(false);
+        toast.success(response.data.message);
+      }      
+      else{
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   }
 
   const handleShowMore = async () => {

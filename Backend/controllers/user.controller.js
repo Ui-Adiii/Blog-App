@@ -83,7 +83,7 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    if (req.user.id !== req.params.userId) {
+    if ((req.user.id !== req.params.userId) && !req.user.isAdmin) {
       return res.json({
         success: false,
         message: "not allowed to delete the user",
