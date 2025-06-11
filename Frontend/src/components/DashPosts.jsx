@@ -97,9 +97,9 @@ const DashPosts = () => {
                 <span>Edit</span>
               </TableHeadCell>
             </TableHead>
+            <TableBody className="divide-y">
             {userPosts.map((post) => (
-              <TableBody key={post._id} className="divide-y">
-                <TableRow className="text-gray-300  dark:border-gray-700 dark:bg-gray-800">
+                <TableRow key={post._id}  className="text-gray-300  dark:border-gray-700 dark:bg-gray-800">
                   <TableCell>
                     {new Date(post.updatedAt).toLocaleDateString()}
                   </TableCell>
@@ -141,8 +141,8 @@ const DashPosts = () => {
                     </Link>
                   </TableCell>
                 </TableRow>
-              </TableBody>
             ))}
+            </TableBody>
           </Table>
           {showMore && (
             <button

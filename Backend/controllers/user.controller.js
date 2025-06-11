@@ -118,7 +118,8 @@ const signOut = async (req, res) => {
 
 const getUsers = async (req, res) => {
   try {
-    if (req.user.isAdmin) {
+
+    if (!req.user.isAdmin) {
       return res.json({
         success: false,
         message: "You are not allowed to see all users",
