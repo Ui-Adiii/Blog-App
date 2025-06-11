@@ -11,7 +11,7 @@ const updateUser = async (req, res) => {
         resource_type: "image",
       });
     }
-    if (req.user.id !== req.params.userId) {
+    if (req.user.id !== req.query.userId) {
       return res.json({
         success: false,
         message: "not allowed to update the user",
@@ -116,4 +116,50 @@ const signOut = async (req, res) => {
   }
 };
 
-export { updateUser, deleteUser ,signOut};
+const getUsers = async (req, res) => {
+  try {
+    if (req.user.isAdmin) {
+      return res.json({
+        success: false,
+        message: "You are not allowed to see all users",
+      });
+    }
+
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const sortDirection = req.query.sortDirection === "asc" ? 1 : -1;
+    // const sortParam = req.query.sortDirection || "desc";
+    // const sortDirection = sortParam === "asc" ? 1 : -1;
+
+    const users = await User.find({})
+      .sort({ createdAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit)
+      .select("-password");
+
+    // const usersWithoutPassword = users.map((user) => {
+    //   const { password, ...rest } = user._doc;
+    //   return rest;
+    // })
+
+    const totalUser = await User.countDocuments();
+    const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const lastMonthUsers = await User.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+    return res.json({
+      users,
+      totalUser,
+      lastMonthUsers,
+      success: true,
+      message: "fetched the users data",
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export { updateUser, deleteUser, signOut, getUsers };
