@@ -68,6 +68,7 @@ const DashPosts = () => {
       const response = await axios.delete(
         `/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,  
       );
+      console.log(response.data);
       
       if (!response.data.success) {
         toast.error(response.data.message);

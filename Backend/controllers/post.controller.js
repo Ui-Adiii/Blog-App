@@ -109,6 +109,7 @@ const getPosts = async (req, res) => {
 
 const deletePost = async (req, res) => {
   try {
+
     if (!req.user.isAdmin || req.user.id !== req.params.userId) {
       return res.json({
         message: "you are not allowed to delete the post",
@@ -116,7 +117,7 @@ const deletePost = async (req, res) => {
       });
     }
 
-    await Post.findByIdAndDelete(req.params.userId);
+    await Post.findByIdAndDelete(req.params.postId);
 
     return res.json({
       message: "post deleted successfully",
