@@ -3,13 +3,14 @@ import {  Link, useParams } from 'react-router'
 import { toast } from 'react-toastify'
 import axios from 'axios';
 import { Spinner, Button } from 'flowbite-react'
+import CallToAction from '../components/CallToAction';
+
+
 const PostPage = () => {
   const { postslug } = useParams();
   const [loading, setloading] = useState(true)
   const [error, seterror] = useState(false)
   const [post, setpost] = useState(null);
-
-  
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -67,8 +68,9 @@ const PostPage = () => {
       dangerouslySetInnerHTML={{ __html: post && post.content }}
     ></div>
       
-    <div className='max-w-4xl mx-auto w-full'>
-    </div>
+      <div className='max-w-4xl mx-auto w-full'>
+        <CallToAction/>
+      </div>
 
     <div className='flex flex-col justify-center items-center mb-5'>
       <h1 className='text-xl mt-5'>Recent articles</h1>
