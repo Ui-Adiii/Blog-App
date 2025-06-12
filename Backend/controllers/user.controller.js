@@ -11,7 +11,7 @@ const updateUser = async (req, res) => {
         resource_type: "image",
       });
     }
-    if (req.user.id !== req.query.userId) {
+    if (req.user.id !== req.params.userId) {
       return res.json({
         success: false,
         message: "not allowed to update the user",
