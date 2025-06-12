@@ -1,6 +1,5 @@
 import Comment from '../models/comment.model.js'
 
-
 const createComment = async (req, res) => {
   try {
     const { content, userId, postId } = req.body;
@@ -44,4 +43,29 @@ const createComment = async (req, res) => {
     });
   }
 }
-export {createComment}
+
+const getPostComments = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const comments = await Comment.find({ postId }).sort({createdAt:-1});
+    if (!comments) {
+      return res.json({
+        message: 'No comments are there',
+        success: false,
+      });
+    }
+
+    return res.json({
+      message: 'Comments get successfully',
+      comments,
+      success: true,
+    });
+  } catch (error) {
+    return res.json({
+      message: error.message,
+      success: false,
+    });
+  }
+}
+
+export { createComment, getPostComments };

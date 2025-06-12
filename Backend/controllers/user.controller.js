@@ -163,4 +163,26 @@ const getUsers = async (req, res) => {
   }
 };
 
-export { updateUser, deleteUser, signOut, getUsers };
+const getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId).select('-password');
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "no user is there",
+      });
+    }
+    return res.json({
+      success: true,
+      user,
+      message:"user fetched successfully"
+    })
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: error.message
+    });
+  }
+}
+
+export { updateUser, deleteUser, signOut, getUsers,getUser };
