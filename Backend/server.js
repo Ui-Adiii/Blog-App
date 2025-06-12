@@ -4,6 +4,7 @@ import cors from "cors";
 import connectDB from "./utils/db.js";
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
+import commentRouter from "./routes/comment.route.js";
 import postRouter from "./routes/post.route.js";
 import cookieParser from "cookie-parser";
 import connectCloudinary from "./utils/cloudinary.js";
@@ -25,6 +26,7 @@ app.use(cookieParser());
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/post", postRouter);
+app.use("/api/comment", commentRouter);
 
 app.listen(PORT, () => {
   console.log(`server started on : ${PORT}`);
