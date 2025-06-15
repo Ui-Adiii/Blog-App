@@ -47,7 +47,7 @@ const Home = () => {
               ))}
             </div>
             <Link
-              to={'/search'}
+              to={'/post'}
               className='text-lg text-teal-500 hover:underline text-center'
             >
               View all posts
