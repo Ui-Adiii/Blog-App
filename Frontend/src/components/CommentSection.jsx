@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button, Textarea } from "flowbite-react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -9,6 +9,7 @@ import Comment from "./Comment";
 
 
 const CommentSection = ({ postId }) => {
+  const navigate =useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const [comment, setcomment] = useState("");
   const [comments, setcomments] = useState([]);
@@ -22,7 +23,6 @@ const CommentSection = ({ postId }) => {
         postId,
         userId: currentUser._id,
       });
-      console.log(response);
       
       if (response.data.success) {
         setcomment("");
@@ -53,6 +53,26 @@ const CommentSection = ({ postId }) => {
     getComments();
   }, [postId]);
 
+   const handleLike = async (commentId) => {
+    try {
+      if (!currentUser) {
+        navigate("/sign-in");
+        return;
+      }
+      const response = await axios.put(`/api/comment/likecomment/${commentId}`);
+      if (response.data.success) {
+        setcomments(
+          comments.map((comment) =>
+            comment._id === commentId
+              ? { ...comment, likes: response.data.comment.likes, numberOfLikes: response.data.comment.likes.length }
+              : comment
+          )
+        );
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   return (
     <div className="max-w-2xl mx-auto w-full ">
       {currentUser ? (
@@ -114,6 +134,7 @@ const CommentSection = ({ postId }) => {
               comments.map((comment) => (<Comment
               key={comment._id}
                comment={comment}
+               onLike={handleLike}
               />))
             }
         </>

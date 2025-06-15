@@ -68,4 +68,43 @@ const getPostComments = async (req, res) => {
   }
 }
 
-export { createComment, getPostComments };
+const likeComment = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) {
+      return res.json({
+        message:'comment is not available',
+        success: false,
+      });
+    }
+    const userIndex = comment.likes.indexOf(req.user.id);
+    let message;
+    if (userIndex === -1) {
+      comment.numberOfLikes +=1
+      comment.likes.push(req.user.id);
+      message= 'Comment liked successfully';
+
+    }
+    else {
+          message= 'Comment Unliked successfully',
+
+      comment.numberOfLikes -= 1
+      comment.likes.splice(userIndex, 1);
+    }
+    await comment.save();
+   
+    return res.json({
+    message,
+      success: true,
+      comment,
+    });
+
+  } catch (error) {
+    return res.json({
+      message: error.message,
+      success: false,
+    });
+  }
+};
+
+export { createComment, getPostComments, likeComment };

@@ -57,7 +57,6 @@ const UpdatePost = () => {
       
 
       const response = await axios.put(`/api/post/updatepost/${postId}/${currentUser._id}`, formData);
-      console.log(response);
       
       if (response.data.success) {
         setLoading(false);
