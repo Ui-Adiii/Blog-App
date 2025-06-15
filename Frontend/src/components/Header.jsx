@@ -6,6 +6,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../redux/theme/themeSlice';
 import { signoutSuccess } from '../redux/user/userSlice';
 import { useEffect, useState } from 'react';
+import axios from 'axios'
+import {toast} from 'react-toastify'
 
 export default function Header() {
   const path = useLocation().pathname;
@@ -26,12 +28,10 @@ export default function Header() {
 
   const handleSignout = async () => {
     try {
-      const res = await fetch('/api/user/signout', {
-        method: 'POST',
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        console.log(data.message);
+      const response = await axios.get('/api/user/logout')
+      const {data} = response
+      if (!response.data.success) {
+        toast.error(data.message);
       } else {
         dispatch(signoutSuccess());
       }
@@ -112,7 +112,7 @@ export default function Header() {
       </div>
       <NavbarCollapse>
         <NavbarLink active={path === '/'} as={'div'}>
-          <Link to='/a'>Home</Link>
+          <Link to='/'>Home</Link>
         </NavbarLink>
         <NavbarLink active={path === '/about'} as={'div'}>
           <Link to='/about'>About</Link>
