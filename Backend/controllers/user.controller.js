@@ -143,14 +143,14 @@ const getUsers = async (req, res) => {
     //   return rest;
     // })
 
-    const totalUser = await User.countDocuments();
+    const totalUsers = await User.countDocuments();
     const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const lastMonthUsers = await User.countDocuments({
       createdAt: { $gte: oneMonthAgo },
     });
     return res.json({
       users,
-      totalUser,
+      totalUsers,
       lastMonthUsers,
       success: true,
       message: "fetched the users data",
