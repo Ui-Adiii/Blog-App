@@ -1,5 +1,5 @@
 import express from 'express';
-import { createComment, getPostComments, likeComment,editComment } from '../controllers/comment.controller.js';
+import { createComment, getPostComments, likeComment,editComment, deleteComment } from '../controllers/comment.controller.js';
 
 import userAuth from '../middlewares/auth.middleware.js'
 
@@ -8,5 +8,6 @@ const router = express.Router();
 router.post('/create', userAuth,createComment);
 router.get("/getpostcomments/:postId", getPostComments);
 router.put('/likecomment/:commentId',userAuth,likeComment)
-router.put('/editcomment/:commentId',userAuth,editComment)
+router.put('/editcomment/:commentId',userAuth,editComment);
+router.delete('/deletecomment/:commentId',userAuth,deleteComment);
 export default router;

@@ -1,19 +1,27 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
-import { Button } from "flowbite-react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import Comment from "./Comment";
-import { Textarea } from "flowbite-react";
-
+import {
+  Textarea,
+  Button,
+  Modal,
+  TextInput,
+  ModalHeader,
+  ModalBody,
+} from "flowbite-react";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 const CommentSection = ({ postId }) => {
-  const navigate =useNavigate();
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const [comment, setcomment] = useState("");
   const [comments, setcomments] = useState([]);
+  const [showModal, setshowModal] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,10 +32,10 @@ const CommentSection = ({ postId }) => {
         postId,
         userId: currentUser._id,
       });
-      
+
       if (response.data.success) {
         setcomment("");
-        setcomments([response.data.newComment,...comments])
+        setcomments([response.data.newComment, ...comments]);
       } else {
         toast.error(response.data.message);
       }
@@ -54,7 +62,7 @@ const CommentSection = ({ postId }) => {
     getComments();
   }, [postId]);
 
-   const handleLike = async (commentId) => {
+  const handleLike = async (commentId) => {
     try {
       if (!currentUser) {
         navigate("/sign-in");
@@ -65,7 +73,11 @@ const CommentSection = ({ postId }) => {
         setcomments(
           comments.map((comment) =>
             comment._id === commentId
-              ? { ...comment, likes: response.data.comment.likes, numberOfLikes: response.data.comment.likes.length }
+              ? {
+                  ...comment,
+                  likes: response.data.comment.likes,
+                  numberOfLikes: response.data.comment.likes.length,
+                }
               : comment
           )
         );
@@ -75,14 +87,33 @@ const CommentSection = ({ postId }) => {
     }
   };
 
-  const handleEdit = async (commentId,editedContent)=>{
+  const handleEdit = async (commentId, editedContent) => {
     setcomments(
-      comments.map((comment)=>
-        comment._id === commentId ?{...comment,content:editedContent}:comment
+      comments.map((comment) =>
+        comment._id === commentId
+          ? { ...comment, content: editedContent }
+          : comment
       )
-    )
-  }
+    );
+  };
 
+  const handleDelete = async (commentId) => {
+    setshowModal(false);
+    try {
+      if (!currentUser) {
+        navigate("/sign-in");
+        return;
+      }
+      const response = await axios.delete(
+        `/api/comment/deleteComment/${commentId}`
+      );
+      if (response.data.success) {
+        setcomments(comments.filter((comment) => comment._id !== commentId));
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto w-full ">
@@ -140,15 +171,47 @@ const CommentSection = ({ postId }) => {
             <div className="border border-gray-400 py-1 px-2 rounded-sm">
               <p>{comments.length}</p>
             </div>
-            </div>
-            {
-              comments.map((comment) => (<Comment
+          </div>
+          {comments.map((comment) => (
+            <Comment
               key={comment._id}
-               comment={comment}
-               onEdit={handleEdit}
-               onLike={handleLike}
-              />))
-            }
+              comment={comment}
+              onEdit={handleEdit}
+              onLike={handleLike}
+              onDelete={(commentId) => {
+                setshowModal(true);
+                setCommentToDelete(commentId);
+              }}
+            />
+          ))}
+          <Modal
+            show={showModal}
+            onClose={() => setshowModal(false)}
+            popup
+            size="md"
+          >
+            <ModalHeader>
+              <ModalBody>
+                <div className="text-center">
+                  <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+                  <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+                    Are you sre you want to delete your account?
+                  </h3>
+                  <div className="flex justify-center gap-5">
+                    <Button
+                      color="red"
+                      onClick={() => handleDelete(commentToDelete)}
+                    >
+                      Yes, I am Sure
+                    </Button>
+                    <Button color="light" onClick={() => setshowModal(false)}>
+                      No, Cancel
+                    </Button>
+                  </div>
+                </div>
+              </ModalBody>
+            </ModalHeader>
+          </Modal>
         </>
       )}
     </div>

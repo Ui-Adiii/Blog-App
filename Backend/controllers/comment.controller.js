@@ -113,7 +113,7 @@ const editComment = async (req, res) => {
   try {
     const { commentId } = req.params;
     const user = req.user;
-    
+
     const comment = await Comment.findById(commentId);
     if (!comment) {
       return res.json({
@@ -121,7 +121,6 @@ const editComment = async (req, res) => {
         success: false,
       });
     }
-    
 
     if (comment.userId !== user.id && !user.isAdmin) {
       return res.json({
@@ -135,9 +134,8 @@ const editComment = async (req, res) => {
     return res.json({
       message: "comment edited successfully",
       success: true,
-      comment
+      comment,
     });
-
   } catch (error) {
     return res.json({
       success: false,
@@ -146,4 +144,37 @@ const editComment = async (req, res) => {
   }
 };
 
-export { editComment, createComment, getPostComments, likeComment };
+const deleteComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const user = req.user;
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.json({
+        message: "No comment Found",
+        success: false,
+      });
+    }
+
+    if (user.id !== comment.userId && !user.isAdmin) {
+      return res.json({
+        message: "You are not  allowed to delete this Comment",
+        success: false,
+      });
+    }
+
+    await Comment.findByIdAndDelete(commentId);
+
+    return res.json({
+      message: "comment deleted successfully",
+      success: true,
+    });
+  } catch (error) {
+    return res.json({
+      message: error.message,
+      success: false,
+    });
+  }
+};
+
+export { editComment, createComment, getPostComments, likeComment ,deleteComment};
