@@ -1,4 +1,4 @@
-import React, { useDebugValue, useEffect, useState } from 'react'
+import React, {  useEffect, useState } from 'react'
 import {  Link, useParams } from 'react-router'
 import { toast } from 'react-toastify'
 import axios from 'axios';
@@ -11,7 +11,6 @@ import PostCard from '../components/PostCard';
 const PostPage = () => {
   const { postslug } = useParams();
   const [loading, setloading] = useState(true)
-  const [error, seterror] = useState(false)
   const [post, setpost] = useState(null);
   const [recentPosts, setrecentPosts] = useState([])
 
@@ -22,12 +21,10 @@ const PostPage = () => {
         setloading(true);
         const response = await axios.get(`/api/post/getposts?slug=${postslug}`);
         if (response.data.success) {
-          seterror(false);        
           setloading(false);
           setpost(response.data.posts[0]);
         }
         else{
-          seterror(true);
           setloading(false);
         }
       } catch (err) {
