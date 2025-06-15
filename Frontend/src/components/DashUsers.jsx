@@ -24,12 +24,12 @@ const DashUsers = () => {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [userIdToDelete, setuserIdToDelete] = useState("");
-
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(`/api/user/getusers`);
-
+        
         if (response.data.success) {
           setUsers(response.data.users);
           if (response.data.users.length < 9) {

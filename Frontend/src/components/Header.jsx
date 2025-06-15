@@ -44,7 +44,7 @@ const Header = () => {
       }
     } catch (err) {
       dispatch(signoutFailure(err.message))
-      toast.error(error);
+      toast.error(error.message);
     }
   };
 

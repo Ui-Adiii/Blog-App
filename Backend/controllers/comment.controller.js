@@ -1,18 +1,25 @@
-import Comment from '../models/comment.model.js'
+import Comment from "../models/comment.model.js";
 
 const createComment = async (req, res) => {
   try {
     const { content, userId, postId } = req.body;
     if (!userId === req.user.id) {
       return res.json({
-        message: 'unauthorized user',
+        message: "unauthorized user",
         success: false,
       });
     }
 
-    if (!content || content === '' || !userId || userId === '' || !postId || postId === '') {
+    if (
+      !content ||
+      content === "" ||
+      !userId ||
+      userId === "" ||
+      !postId ||
+      postId === ""
+    ) {
       return res.json({
-        message: 'All fields are required',
+        message: "All fields are required",
         success: false,
       });
     }
@@ -20,43 +27,42 @@ const createComment = async (req, res) => {
     const newComment = await Comment.create({
       content,
       postId,
-      userId
+      userId,
     });
 
     if (!newComment) {
       return res.json({
-        message: 'Something wrong',
+        message: "Something wrong",
         success: false,
       });
     }
 
     return res.status(201).json({
       newComment,
-      message: 'Comment Created SuccessFully',
+      message: "Comment Created SuccessFully",
       success: true,
     });
-
   } catch (error) {
     return res.json({
       message: error.message,
       success: false,
     });
   }
-}
+};
 
 const getPostComments = async (req, res) => {
   try {
     const { postId } = req.params;
-    const comments = await Comment.find({ postId }).sort({createdAt:-1});
+    const comments = await Comment.find({ postId }).sort({ createdAt: -1 });
     if (!comments) {
       return res.json({
-        message: 'No comments are there',
+        message: "No comments are there",
         success: false,
       });
     }
 
     return res.json({
-      message: 'Comments get successfully',
+      message: "Comments get successfully",
       comments,
       success: true,
     });
@@ -66,39 +72,35 @@ const getPostComments = async (req, res) => {
       success: false,
     });
   }
-}
+};
 
 const likeComment = async (req, res) => {
   try {
-    const comment = await Comment.findById(req.params.commentId);
+    const { commentId } = req.params;
+    const comment = await Comment.findById(commentId);
     if (!comment) {
       return res.json({
-        message:'comment is not available',
+        message: "comment is not available",
         success: false,
       });
     }
     const userIndex = comment.likes.indexOf(req.user.id);
     let message;
     if (userIndex === -1) {
-      comment.numberOfLikes +=1
+      comment.numberOfLikes += 1;
       comment.likes.push(req.user.id);
-      message= 'Comment liked successfully';
-
-    }
-    else {
-          message= 'Comment Unliked successfully',
-
-      comment.numberOfLikes -= 1
+      message = "Comment liked successfully";
+    } else {
+      (message = "Comment Unliked successfully"), (comment.numberOfLikes -= 1);
       comment.likes.splice(userIndex, 1);
     }
     await comment.save();
-   
+
     return res.json({
-    message,
+      message,
       success: true,
       comment,
     });
-
   } catch (error) {
     return res.json({
       message: error.message,
@@ -107,4 +109,41 @@ const likeComment = async (req, res) => {
   }
 };
 
-export { createComment, getPostComments, likeComment };
+const editComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const user = req.user;
+    
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.json({
+        message: "comment is not available",
+        success: false,
+      });
+    }
+    
+
+    if (comment.userId !== user.id && !user.isAdmin) {
+      return res.json({
+        message: "you are not allowed to update ",
+        success: false,
+      });
+    }
+
+    comment.content = req.body.content;
+    await comment.save();
+    return res.json({
+      message: "comment edited successfully",
+      success: true,
+      comment
+    });
+
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export { editComment, createComment, getPostComments, likeComment };

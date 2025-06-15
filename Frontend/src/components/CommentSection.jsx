@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
-import { Button, Textarea } from "flowbite-react";
+import { Button } from "flowbite-react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import Comment from "./Comment";
+import { Textarea } from "flowbite-react";
 
 
 const CommentSection = ({ postId }) => {
@@ -73,6 +74,16 @@ const CommentSection = ({ postId }) => {
       toast.error(error.message);
     }
   };
+
+  const handleEdit = async (commentId,editedContent)=>{
+    setcomments(
+      comments.map((comment)=>
+        comment._id === commentId ?{...comment,content:editedContent}:comment
+      )
+    )
+  }
+
+
   return (
     <div className="max-w-2xl mx-auto w-full ">
       {currentUser ? (
@@ -134,6 +145,7 @@ const CommentSection = ({ postId }) => {
               comments.map((comment) => (<Comment
               key={comment._id}
                comment={comment}
+               onEdit={handleEdit}
                onLike={handleLike}
               />))
             }

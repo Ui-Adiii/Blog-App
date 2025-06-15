@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import {signInSuccess} from '../redux/user/userSlice'
 import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 
 const OAuth = () => {
   const dispath = useDispatch();
@@ -30,7 +31,7 @@ const OAuth = () => {
         navigate('/')
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
     }
   }
   return (

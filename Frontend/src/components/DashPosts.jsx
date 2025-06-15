@@ -37,7 +37,7 @@ const DashPosts = () => {
           }
         }
       } catch (error) {
-        console.log(error.message);
+        toast.error(error.message);
       }
     };
     if (currentUser.isAdmin) {
@@ -58,7 +58,7 @@ const DashPosts = () => {
         }
       }
     } catch (error) {
-      console.log(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -78,7 +78,7 @@ const DashPosts = () => {
         toast.success(response.data.message);
       }
     } catch (error) {
-      console.log(error.message);
+      toast.error(error.message);
     }
   };
 
