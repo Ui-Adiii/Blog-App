@@ -2,7 +2,7 @@ import { Button, Select, TextInput } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PostCard from '../components/PostCard';
-
+import axios from 'axios'
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
     searchTerm: '',
@@ -36,13 +36,13 @@ export default function Search() {
     const fetchPosts = async () => {
       setLoading(true);
       const searchQuery = urlParams.toString();
-      const res = await fetch(`/api/post/getposts?${searchQuery}`);
-      if (!res.ok) {
+      const response = await axios.get(`/api/post/getposts?${searchQuery}`);
+      if (!response.data.success) {
         setLoading(false);
         return;
       }
-      if (res.ok) {
-        const data = await res.json();
+      if (response.data.success) {
+        const {data} = response;
         setPosts(data.posts);
         setLoading(false);
         if (data.posts.length === 9) {
@@ -85,12 +85,12 @@ export default function Search() {
     const urlParams = new URLSearchParams(location.search);
     urlParams.set('startIndex', startIndex);
     const searchQuery = urlParams.toString();
-    const res = await fetch(`/api/post/getposts?${searchQuery}`);
-    if (!res.ok) {
+    const res = await axios.get(`/api/post/getposts?${searchQuery}`);
+    if (!res.data.success) {
       return;
     }
-    if (res.ok) {
-      const data = await res.json();
+    if (res.data.success) {
+      const {data} =res;
       setPosts([...posts, ...data.posts]);
       if (data.posts.length === 9) {
         setShowMore(true);
