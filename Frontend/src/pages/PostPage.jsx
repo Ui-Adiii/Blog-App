@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useDebugValue, useEffect, useState } from 'react'
 import {  Link, useParams } from 'react-router'
 import { toast } from 'react-toastify'
 import axios from 'axios';
 import { Spinner, Button } from 'flowbite-react'
 import CallToAction from '../components/CallToAction';
 import CommentSection from '../components/CommentSection';
+import PostCard from '../components/PostCard';
 
 
 const PostPage = () => {
@@ -12,6 +13,8 @@ const PostPage = () => {
   const [loading, setloading] = useState(true)
   const [error, seterror] = useState(false)
   const [post, setpost] = useState(null);
+  const [recentPosts, setrecentPosts] = useState([])
+
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -34,7 +37,21 @@ const PostPage = () => {
     fetchPost();
   }, [postslug])
   
+  useEffect(() => {
+    const fetchRecentPosts = async ()=>{
+      try {
+        const response = await axios.get(`/api/post/getposts?limit=3`);        
+        if (response.data.success) {
+          setrecentPosts(response.data.posts);
+        }
+      } catch (err) {
+        toast.error(err.message);
+      }
+    }
+    fetchRecentPosts();
+  }, [])
   
+
   if (loading) return (
     <div className=' flex justify-center min-h-screen items-center'>
       <Spinner size='xl' />
@@ -76,7 +93,8 @@ const PostPage = () => {
     <div className='flex flex-col justify-center items-center mb-5'>
       <h1 className='text-xl mt-5'>Recent articles</h1>
       <div className='flex flex-wrap gap-5 mt-5 justify-center'>
-       
+       {recentPosts &&
+            recentPosts.map((post) => <PostCard key={post._id} post={post} />)}
       </div>
     </div>
   </main>
