@@ -107,7 +107,3 @@ A modern, full-featured blogging platform built with the **MERN stack** (MongoDB
    ```
 
 ---
-
-## 📝 License
-
-This project is licensed under the MIT License.
