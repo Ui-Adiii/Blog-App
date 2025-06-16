@@ -90,16 +90,6 @@ A modern, full-featured blogging platform built with the **MERN stack** (MongoDB
    cd Backend
    npm install
    ```
-3. **Set Up Environment Variables**
-   - Create a `.env` file in `Backend/` with:
-     ```env
-     MONGO_URI=your_mongodb_connection_string
-     JWT_SECRET=your_jwt_secret
-     CLOUDINARY_CLOUD_NAME=your_cloudinary_name
-     CLOUDINARY_API_KEY=your_cloudinary_api_key
-     CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-     PORT=5000
-     ```
 4. **Start the Backend Server**
    ```bash
    npm start
